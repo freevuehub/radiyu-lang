@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://w.namu.la/s/ad9c8d3717c499539b97476d2ef0460dad01707f278b44584b9f2ed23d80a7e1eed6114797fd6aa4e0fa798b15d4b3a317d8fd1e7faf3817a678e6e8f4cf2e24513ddefdecbc79734f46471a3af5268c" alr />
+    <img src="https://w.namu.la/s/ad9c8d3717c499539b97476d2ef0460dad01707f278b44584b9f2ed23d80a7e1eed6114797fd6aa4e0fa798b15d4b3a317d8fd1e7faf3817a678e6e8f4cf2e24513ddefdecbc79734f46471a3af5268c" />
 </p>
 
 <h1 align="center">라디유 LANG</h1>
@@ -127,3 +127,7 @@
 요! 구아아아악!갸아아아악!
 요! 16
 ```
+
+<p align="center">
+    이걸 왜 만들었을까...
+</p>
