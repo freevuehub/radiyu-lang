@@ -8,6 +8,15 @@ const 출력 = (값: (string | number)) => {
 
   return `${출력_꾸밈} ${값}`
 }
+const 숫자_변수_추가 = (변수명: string, 값: string, 타입: '숫자!') => {
+  if (isNaN(Number(값)))
+    throw new Error('어라리?')
+
+  변수_모음.set(변수명, { 타입, 값: Number(값) })
+}
+const 글자_변수_추가 = (변수명: string, 값: string, 타입: '글자!') => {
+  변수_모음.set(변수명, { 타입, 값: `${값}` })
+}
 const 값이_없는_경우_메세지 = (값: string | number) => `"${값}"? 뭐지 버근가?`
 const 변수_모음_체크 = (변수명: string) => {
   const 값 = 변수_모음.get(변수명)
@@ -58,16 +67,10 @@ const 라인_실행 = async (코드: string) => {
       .split('=')
       .map((조각) => 조각.trim())
 
-    if (타입 === '숫자!') {
-      const 숫자로_변환된_값 = Number(await 수식_계산(값))
-
-      if (isNaN(숫자로_변환된_값))
-        throw new Error(값이_없는_경우_메세지(값))
-
-      변수_모음.set(변수이름, { 타입, 값: 숫자로_변환된_값 })
-    } else {
-      변수_모음.set(변수이름, { 타입, 값 })
-    }
+    if (타입 === '숫자!')
+      숫자_변수_추가(변수이름, 값, 타입)
+    if (타입 === '글자!')
+      글자_변수_추가(변수이름, 값, 타입)
   }
 
   if (/^야옹/g.test(코드)) {
