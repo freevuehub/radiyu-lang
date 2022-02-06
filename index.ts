@@ -2,8 +2,8 @@ const 지원하는_타입 = ['숫자!', '글자!']
 const 변수_모음 = new Map()
 const 출력_꾸밈 = '요!'
 
-const 콘솔 = (값: (string | number)) => console.log(출력_꾸밈, 값)
-const 출력 = (값: (string | number)) => {
+const 콘솔 = (값: (string | number | boolean)) => console.log(출력_꾸밈, 값)
+const 출력 = (값: (string | number | boolean)) => {
   콘솔(값)
 
   return `${출력_꾸밈} ${값}`
@@ -15,7 +15,7 @@ const 숫자_변수_추가 = (변수명: string, 값: string, 타입: '숫자!')
   변수_모음.set(변수명, { 타입, 값: Number(값) })
 }
 const 글자_변수_추가 = (변수명: string, 값: string, 타입: '글자!') => {
-  변수_모음.set(변수명, { 타입, 값: `${값}` })
+  변수_모음.set(변수명, { 타입, 값: `"${값}"` })
 }
 const 값이_없는_경우_메세지 = (값: string | number) => `"${값}"? 뭐지 버근가?`
 const 변수_모음_체크 = (변수명: string) => {
@@ -27,9 +27,18 @@ const 변수_모음_체크 = (변수명: string) => {
   return 값
 }
 const 문자_출력_체크 = (코드: string) => /".+"/.test(코드)
-  ? 코드.replace('"', '')
+  ? 코드
   : 변수_모음_체크(코드)['값']
-const 수식_계산 = async (코드: string) => {
+const 수식_계산 = (코드: string): string | number | boolean => {
+  if (/={3}/.test(코드)) {
+    const 변환된_수식 = 코드
+      .split('===')
+      .map((조각) => 수식_계산(조각.trim()))
+      .join('===')
+
+    return new Function(`return ${변환된_수식}`)()
+  }
+
   if (/[-+*/]/g.test(코드)) {
     const 변환된_수식 = 코드
       .replace(/\s/g, '')
@@ -42,7 +51,7 @@ const 수식_계산 = async (코드: string) => {
   }
 
   if (!isNaN(Number(코드)))
-    return 코드
+    return Number(코드)
 
   return 문자_출력_체크(코드)
 }
@@ -75,7 +84,7 @@ const 라인_실행 = async (코드: string) => {
 
   if (/^야옹/g.test(코드)) {
     const [선언부] = 조각_유효성_검사(코드, /^야옹(.+)$/g)
-    const 일반_선언부 = await 수식_계산(선언부)
+    const 일반_선언부 = 수식_계산(선언부)
 
     if (!isNaN(Number(일반_선언부))) {
       return 출력(Number(일반_선언부))
@@ -86,6 +95,9 @@ const 라인_실행 = async (코드: string) => {
 }
 
 export const 가자 = async (코드: string) => {
+  let 조건문_실행중 = false
+  let 조건문_만족 = false
+
   const 라인들 = 코드
     .trim()
     .split('\n')
@@ -95,7 +107,23 @@ export const 가자 = async (코드: string) => {
     throw new Error('죠졌네 잉거')
 
   for (const 라인 of 라인들) {
-    await 라인_실행(라인)
+    if (/^됐다!/.test(라인)) {
+      const 조건문_조건절 = 라인.replace('됐다!', '').trim()
+
+      조건문_실행중 = true
+      조건문_만족 = !!수식_계산(조건문_조건절)
+    }
+
+    if (라인.includes('ㅈ됐다!')) {
+      조건문_실행중 = false
+      조건문_만족 = false
+    }
+
+    if (!조건문_실행중)
+      await 라인_실행(라인)
+    else {
+      if (조건문_만족) await 라인_실행(라인)
+    }
   }
 }
 
