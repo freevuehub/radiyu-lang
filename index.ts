@@ -9,20 +9,6 @@ const 출력 = (값: (string | number)) => {
   return `${출력_꾸밈} ${값}`
 }
 const 값이_없는_경우_메세지 = (값: string | number) => `"${값}"? 뭐지 버근가?`
-const 수식_계산 = async (코드: string) => {
-  if (/^.+(?:[+-/*].+)+$/g.test(코드)) {
-    const 변환된_수식 = 코드
-      .replace(/\s/g, '')
-      .replace(
-        /([^-+/*\d]+)/gi,
-        (변수) => 변수_모음_체크(변수)['값']
-      )
-
-    return new Function(`return ${변환된_수식}`)()
-  }
-
-  return 코드
-}
 const 변수_모음_체크 = (변수명: string) => {
   const 값 = 변수_모음.get(변수명)
 
@@ -30,6 +16,26 @@ const 변수_모음_체크 = (변수명: string) => {
     throw new Error(값이_없는_경우_메세지(변수명))
 
   return 값
+}
+const 문자_출력_체크 = (코드: string) => /".+"/.test(코드)
+  ? 코드.replace('"', '')
+  : 변수_모음_체크(코드)['값']
+const 수식_계산 = async (코드: string) => {
+  if (/[-+*/]/g.test(코드)) {
+    const 변환된_수식 = 코드
+      .replace(/\s/g, '')
+      .replace(
+        /([^-+*/]+)/gi,
+        (조각) => isNaN(Number(조각)) ? 문자_출력_체크(조각) : 조각
+      )
+
+    return new Function(`return ${변환된_수식}`)()
+  }
+
+  if (!isNaN(Number(코드)))
+    return 코드
+
+  return 문자_출력_체크(코드)
 }
 const 조각_유효성_검사 = (코드: string, 정규식: RegExp) => {
   const 조각들 = 정규식.exec(코드.trim())
@@ -72,7 +78,7 @@ const 라인_실행 = async (코드: string) => {
       return 출력(Number(일반_선언부))
     }
 
-    return 출력(변수_모음_체크(일반_선언부)['값'])
+    return 출력(일반_선언부)
   }
 }
 
