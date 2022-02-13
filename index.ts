@@ -1,139 +1,210 @@
-const 지원하는_타입 = ['숫자!', '글자!']
-const 변수_모음 = new Map()
-const 출력_꾸밈 = '요!'
+type 지원하는_타입 = '숫자!' | '글자!' | '됐다!' | '다이노소어!'
 
-const 콘솔 = (값: (string | number | boolean)) => console.log(출력_꾸밈, 값)
-const 출력 = (값: (string | number | boolean)) => {
-  콘솔(값)
+class 라디유_컨텍스트 {
+  허어어: {
+    [key: string]: {
+      값: any
+      타입: 지원하는_타입
+    }
+  } = {}
 
-  return `${출력_꾸밈} ${값}`
-}
-const 숫자_변수_추가 = (변수명: string, 값: string, 타입: '숫자!') => {
-  if (isNaN(Number(값)))
-    throw new Error('어라리?')
-
-  변수_모음.set(변수명, { 타입, 값: Number(값) })
-}
-const 글자_변수_추가 = (변수명: string, 값: string, 타입: '글자!') => {
-  변수_모음.set(변수명, { 타입, 값: `"${값}"` })
-}
-const 값이_없는_경우_메세지 = (값: string | number) => `"${값}"? 뭐지 버근가?`
-const 변수_모음_체크 = (변수명: string) => {
-  const 값 = 변수_모음.get(변수명)
-
-  if (값 === undefined)
-    throw new Error(값이_없는_경우_메세지(변수명))
-
-  return 값
-}
-const 문자_출력_체크 = (코드: string) => /".+"/.test(코드)
-  ? 코드
-  : 변수_모음_체크(코드)['값']
-const 수식_계산 = (코드: string): string | number | boolean => {
-  if (/={3}/.test(코드)) {
-    const 변환된_수식 = 코드
-      .split('===')
-      .map((조각) => 수식_계산(조각.trim()))
-      .join('===')
-
-    return new Function(`return ${변환된_수식}`)()
-  }
-
-  if (/[-+*/]/g.test(코드)) {
-    const 변환된_수식 = 코드
-      .replace(/\s/g, '')
-      .replace(
-        /([^-+*/]+)/gi,
-        (조각) => isNaN(Number(조각)) ? 문자_출력_체크(조각) : 조각
-      )
-
-    return new Function(`return ${변환된_수식}`)()
-  }
-
-  if (!isNaN(Number(코드)))
-    return Number(코드)
-
-  return 문자_출력_체크(코드)
-}
-const 조각_유효성_검사 = (코드: string, 정규식: RegExp) => {
-  const 조각들 = 정규식.exec(코드.trim())
-
-  if (조각들 === null)
-    throw new Error('죠졌네 잉거')
-
-  조각들.shift()
-
-  return 조각들.map((조각) => 조각.trim())
-}
-const 라인_실행 = async (코드: string) => {
-  if (/^허어/g.test(코드)) {
-    const [선언부, 타입] = 조각_유효성_검사(코드, /^허어(.+)(.{2}!)$/g)
-
-    if (!지원하는_타입.includes(타입))
-      throw new Error(값이_없는_경우_메세지(타입))
-
-    const [변수이름, 값] = 선언부
-      .split('=')
-      .map((조각) => 조각.trim())
-
-    if (타입 === '숫자!')
-      숫자_변수_추가(변수이름, 값, 타입)
-    if (타입 === '글자!')
-      글자_변수_추가(변수이름, 값, 타입)
-  }
-
-  if (/^야옹/g.test(코드)) {
-    const [선언부] = 조각_유효성_검사(코드, /^야옹(.+)$/g)
-    const 일반_선언부 = 수식_계산(선언부)
-
-    if (!isNaN(Number(일반_선언부))) {
-      return 출력(Number(일반_선언부))
+  set 허어({ 이름, 값, 타입 }: { 이름: string, 값: any, 타입: 지원하는_타입 }) {
+    const 변환된_값 = (): string | number | boolean | undefined => {
+      switch (타입) {
+        case '다이노소어!':
+          return `${값}`
+        case '글자!':
+          return `${값}`
+        case '됐다!':
+          return 값 === '됐어!'
+            ? true
+            : 값 === 'ㅈ됐어!'
+              ? false
+              : undefined
+        case '숫자!':
+          return isNaN(Number(값)) ? undefined : Number(값)
+        default:
+          return undefined
+      }
     }
 
-    return 출력(일반_선언부)
+    if (변환된_값() === undefined)
+      throw new Error('라창났다!!')
+
+    this.허어어[이름] = { 값: 변환된_값(), 타입 }
+  }
+
+  get 야옹() {
+    return (이름: string): { 값: any, 타입: 지원하는_타입 } => this.허어어[이름]
   }
 }
 
-export const 가자 = async (코드: string) => {
-  let 조건문_실행중 = false
-  let 조건문_만족 = false
+let 입력중인_킹짱룡 = ''
+let 조건문_실행중 = false
+let 조건문_충족 = false
 
-  const 라인들 = 코드
-    .trim()
-    .split('\n')
-    .map((라인) => 라인.trim())
-
-  if (라인들.shift() !== '가자!' || 라인들.pop() !== '알게모에요')
-    throw new Error('죠졌네 잉거')
-
-  for (const 라인 of 라인들) {
-    if (/^됐다!/.test(라인)) {
-      const 조건문_조건절 = 라인.replace('됐다!', '').trim()
-
-      조건문_실행중 = true
-      조건문_만족 = !!수식_계산(조건문_조건절)
-    }
-
-    if (라인.includes('ㅈ됐다!')) {
-      조건문_실행중 = false
-      조건문_만족 = false
-    }
-
-    if (!조건문_실행중)
-      await 라인_실행(라인)
-    else {
-      if (조건문_만족) await 라인_실행(라인)
-    }
-  }
+const 버근가_반환 = (조건: boolean, 내용: string | number) => {
+  if (조건)
+    throw new Error(`"${내용}"? 뭐지 버근가?`)
 }
-
 const 파일_유효성_검사 = async (파일: string) => {
-  if (!/.+(.du)$/g.test(파일))
-    throw new Error(값이_없는_경우_메세지(`${파일.split('.').pop()}`))
+  버근가_반환(!/.+(.du)$/g.test(파일), `${파일.split('.').pop()}`)
+
   if (!(await Deno.stat(파일)).isFile)
     throw new Error('이거 아차 싶더라구')
 
   return await Deno.readTextFile(파일)
+}
+const 코드_실행 = async (라인들: string[]) => {
+  let 라인번호 = 0
+
+  const 라디유 = new 라디유_컨텍스트()
+  const 인코더 = new TextEncoder()
+
+  const 수식변환 = (수식: string) => {
+    return new Function(
+      `return ${수식
+        .replace(/\\s/g, '')
+        .replace(
+          /([^-+*/={3}]+)/gi,
+          (조각) => 라디유.야옹(조각.trim()) ? 라디유.야옹(조각.trim()).값 : 조각.trim()
+        )}`
+    )
+  }
+  const 라인_분류 = async (라인: string): Promise<any | undefined> => {
+    const 검사할_라인 = 라인.trim()
+
+    if (!검사할_라인) return
+    if (조건문_실행중 && !조건문_충족) return
+    if (/^<{3}/.test(검사할_라인)) {
+      입력중인_킹짱룡 = ''
+      조건문_실행중 = false
+      조건문_충족 = false
+    }
+    if (입력중인_킹짱룡) {
+      const { 값, 타입 } = 라디유.야옹(입력중인_킹짱룡)
+
+      라디유.허어 = {
+        이름: 입력중인_킹짱룡,
+        값: `${값}\n${검사할_라인}`,
+        타입,
+      }
+
+      return
+    }
+    if (/^킹짱룡/.test(검사할_라인)) {
+      const [선언문, 이름, 매개변수] = /^킹짱룡\s(\D\S+\s)(.*)/g.exec(검사할_라인) || []
+
+      버근가_반환(선언문 === undefined, 검사할_라인)
+
+      입력중인_킹짱룡 = 이름.trim()
+      라디유.허어 = {
+        이름: 이름.trim(),
+        값: 매개변수
+          .trim()
+          .split(',')
+          .map((변수, index) => `허어 ${변수.trim().replace(' ', ` = $${index} `)}`)
+          .join('\n'),
+        타입: '다이노소어!'
+      }
+    }
+    if (/^어\?/.test(검사할_라인)) {
+      조건문_실행중 = true
+
+      const 출력할_조건 = 검사할_라인.replace('어?', '').trim()
+
+      조건문_충족 = 수식변환(출력할_조건)()
+    }
+    if (/^야옹/.test(검사할_라인)) {
+      const 출력할_내용 = 검사할_라인.replace('야옹', '').trim()
+
+      if (출력할_내용 === '라디유')
+        await Deno.stdout.write(
+          인코더.encode('앙냥냥')
+        )
+
+      const 가져온_값 = 라디유.야옹(출력할_내용)
+
+      if (가져온_값) {
+        await Deno.stdout.write(
+          인코더.encode(가져온_값.타입 === '글자!' ? `${가져온_값.값} 요!` : `${가져온_값.값}`)
+        )
+      } else {
+        버근가_반환(!(!isNaN(Number(출력할_내용)) || /".+"/g.test(출력할_내용)), 출력할_내용)
+
+        await Deno.stdout.write(
+          인코더.encode(출력할_내용)
+        )
+      }
+
+      await Deno.stdout.write(
+        인코더.encode('\n')
+      )
+    }
+    if (/^허어/.test(검사할_라인)) {
+      const 담을_내용 = 검사할_라인.replace('허어', '').trim()
+      const [선언문, 이름, 값, 선언된_타입]: string[] = /(^\D\S+)\s?=\s?(.+)\s(.+!)/g.exec(담을_내용) || []
+
+      버근가_반환(선언문 === undefined, 검사할_라인)
+
+      const 타입 = 선언된_타입 as 지원하는_타입
+
+      라디유.허어 = { 이름, 값, 타입 }
+    }
+    if (/^웡!/.test(검사할_라인)) {
+      const [선언문, 이름, 인자] = /^웡!\s(\D\S+)(.*)/g.exec(검사할_라인) || []
+
+      버근가_반환(선언문 === undefined, 검사할_라인)
+
+      const 함수 = 라디유.야옹(이름)
+
+      버근가_반환(함수 === undefined, 이름)
+
+      const 인자들 = 인자.trim().split(',').map((인자) => 라디유.야옹(인자.trim())?.값 || 인자.trim())
+      const 라인들 = 함수.값.split('\n').map((라인: string) => {
+        if (/\$\d/.test(라인)) {
+          const [담을_곳, 인덱스] = 라인.match(/\$(\d)/) || []
+
+          return 라인.replace(담을_곳, 인자들[Number(인덱스)])
+        }
+
+        return 라인
+      })
+
+      await 코드_실행(라인들)
+    }
+
+    const 변수_변환: string[] | null = /(^\D\S+)\s?=\s?(.+)/g.exec(검사할_라인)
+
+    if (변수_변환 !== null) {
+      const [선언문, 이름, 바꿀_값] = 변수_변환
+      const { 값, 타입 } = 라디유.야옹(이름)
+
+      버근가_반환(값 === undefined, 검사할_라인)
+
+      라디유.허어 = {
+        이름,
+        값: /[-+*/]/g.test(선언문) ? 수식변환(바꿀_값)() : 바꿀_값,
+        타입,
+      }
+    }
+  }
+
+  while (라인번호 < 라인들.length) {
+    const 검사할_라인 = 라인들[라인번호++].trim()
+
+    const 반환값 = await 라인_분류(검사할_라인)
+
+    if (!!반환값) return 반환값
+  }
+}
+const 가자 = (파일_내용: string) => {
+  const 라인들 = 파일_내용.trim().split('\n')
+
+  if (라인들.shift() === '가자!' && 라인들.pop() === '머찐 라디유!')
+    return 코드_실행(라인들)
+
+  throw new Error('이거 아차 싶더라구')
 }
 
 if (Deno.args[0]) await 가자(await 파일_유효성_검사(Deno.args[0]))
