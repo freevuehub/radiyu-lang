@@ -2,7 +2,7 @@
     <img src="https://w.namu.la/s/ad9c8d3717c499539b97476d2ef0460dad01707f278b44584b9f2ed23d80a7e1eed6114797fd6aa4e0fa798b15d4b3a317d8fd1e7faf3817a678e6e8f4cf2e24513ddefdecbc79734f46471a3af5268c" />
 </p>
 
-<h1 align="center">라디유 LANG</h1>
+<h1 align="center">라디어 - 라디유 LANG</h1>
 
 <p align="center">
     트위치 스트리머 <b>라디유</b>의 어록을 이용한 프로그래밍 언어입니다. <br />
