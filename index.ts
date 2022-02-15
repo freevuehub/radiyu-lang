@@ -1,4 +1,4 @@
-import 라디유_컨텍스트 from './module/context.ts'
+import 라디유_컨텍스트, { 인터페이스_허어어 } from './module/context.ts'
 
 import type { 지원하는_타입 } from './type.ts'
 
@@ -18,19 +18,24 @@ const 파일_유효성_검사 = async (파일: string) => {
 
   return await Deno.readTextFile(파일)
 }
-const 코드_실행 = async (라인들: string[]) => {
+const 코드_실행 = async (라인들: string[], 스코프?: 인터페이스_허어어) => {
   let 라인번호 = 0
 
-  const 라디유 = new 라디유_컨텍스트()
+  const 라디유 = new 라디유_컨텍스트({ 상속: 스코프 || {} })
   const 인코더 = new TextEncoder()
 
   const 수식변환 = (수식: string) => {
     return new Function(
       `return ${수식
-        .replace(/\\s/g, '')
+        .replace(/\\\\s/g, '')
         .replace(
-          /([^-+*/={3}]+)/gi,
-          (조각) => 라디유.야옹(조각.trim()) ? 라디유.야옹(조각.trim()).값 : 조각.trim()
+          /([^-+*\\/!={2,3}]+)/gi,
+          (조각) => {
+            const 조각_변환 = 조각.trim()
+            const 반환 = 라디유.야옹(조각_변환)
+            
+            return 반환 ? 반환.값 : 조각_변환
+          }
         )}`
     )
   }
@@ -81,9 +86,9 @@ const 코드_실행 = async (라인들: string[]) => {
     if (/^야옹/.test(검사할_라인)) {
       const 출력할_내용 = 검사할_라인.replace('야옹', '').trim()
 
-      if (출력할_내용 === '라디유')
+      if (출력할_내용 === '디유야')
         await Deno.stdout.write(
-          인코더.encode('앙냥냥')
+          인코더.encode('라디유!')
         )
 
       const 가져온_값 = 라디유.야옹(출력할_내용)
@@ -134,7 +139,7 @@ const 코드_실행 = async (라인들: string[]) => {
         return 라인
       })
 
-      await 코드_실행(라인들)
+      await 코드_실행(라인들, 라디유.허어어)
     }
 
     const 변수_변환: string[] | null = /(^\D\S+)\s?=\s?(.+)/g.exec(검사할_라인)

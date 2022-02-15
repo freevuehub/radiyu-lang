@@ -1,12 +1,22 @@
 import type { 지원하는_타입 } from '../type.ts'
 
+export interface 인터페이스_허어어 {
+  [key: string]: {
+    값: any
+    타입: 지원하는_타입
+  }
+}
+
 export default class {
-  허어어: {
-    [key: string]: {
-      값: any
-      타입: 지원하는_타입
+  허어어: 인터페이스_허어어 = {}
+
+  constructor({ 상속 }: { 상속: 인터페이스_허어어 }) {
+    this.허어어 = {
+      ...this.허어어,
+      ...상속,
     }
-  } = {}
+  }
+
 
   set 허어({ 이름, 값, 타입 }: { 이름: string, 값: any, 타입: 지원하는_타입 }) {
     const 변환된_값 = (): string | number | boolean | undefined => {
