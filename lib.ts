@@ -35,3 +35,14 @@ export const 버근가 = async (조건: boolean, 내용: string | number) => {
   if (조건)
     return 에러메시지출력(조건, `"${내용}"? 뭐지 버근가?`)
 }
+
+export const 이스터에그 = (값: string) => {
+  switch (값) {
+    case '라디유!':
+      return '머찐 라디유!'
+    case '랜도프!':
+      return '이제 그만 보내주자..'
+    default:
+      return 값
+  }
+}
