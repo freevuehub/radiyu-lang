@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="next-head-count" content="3">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title><%= title %></title>
+
+    <link rel="shortcut icon" href="image/favicon.jpg">
+    <link rel="icon" href="image/favicon.jpg" type="image/x-icon">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TZYYX75ZTM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-TZYYX75ZTM');
+    </script>
+
+    <%- scripts %>
+
+    <link rel="stylesheet" href="style/reset.css">
+    <link rel="stylesheet" href="style/common.css">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <div id="root"><%- content %></div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+@font-face {
+	font-family: 'CBNUJIKJI';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202@1.0/CBNUJIKJI.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Galmuri9';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/Galmuri9.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+:root {
+	--primary-color: #5150AC;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+button, input, textarea {
+	border: 0;
+	background: transparent;
+}
+button:focus, input:focus, textarea:focus {
+	outline: 0;
+}
+ul, ol {
+	list-style: none;
+}
+
+html, body {
+	font-family: 'Galmuri9';
+	font-size: 14px;
+	font-weight: 400;
+	height: 100%;
+}
+
+#root {
+	height: 100%;
+}

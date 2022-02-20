@@ -10,18 +10,31 @@ import {
   urlencoded,
   raw,
   text,
+  React,
+  ReactDOMServer,
 } from './deps.ts'
+import { App } from './src/App.tsx'
 import { 가자 } from './index.ts'
 
 const app = opine()
 const PORT = parseInt(Deno.env.get('PORT') ?? '3000')
 const __dirname = dirname(import.meta.url)
 
-app.engine('.ejs', renderFileToString)
+const { files } = await Deno.emit(
+  './src/Client.tsx',
+  {
+    bundle: 'module',
+    compilerOptions: {
+      lib: ['dom', 'dom.iterable', 'esnext'],
+    },
+  },
+)
+
+app.engine('.html', renderFileToString)
 app
   .set('port', PORT)
   .set('views', join(__dirname, 'views'))
-  .set('view engine', 'ejs')
+  .set('view engine', 'html')
 
 app
   .use(serveStatic(join(__dirname, 'public')))
@@ -29,13 +42,26 @@ app
   .use(urlencoded())
   .use(raw())
   .use(text())
-  .use(serveStatic(join(__dirname, 'public')))
 
 app
+  .get('/scripts/client.js', async (_: Request, response) => {
+    const js = files['deno:///bundle.js']
+
+    response.type('application/javascript').send(js);
+  })
   .get('/', async (_: Request, response: Response) => {
+    const content = (ReactDOMServer as any).renderToString(
+      <App isServer={true} />
+    )
+    const scripts = `<script type="module" src="/scripts/client.js"></script>`
+
     response
       .set('cache-control', 'no-store')
-      .render('index')
+      .render('index', {
+        content,
+        scripts,
+        title: '라디어 플레이그라운드 | FreeVueToy',
+      })
   })
 app
   .post('/run', async (request: Request, response: Response) => {

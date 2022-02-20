@@ -1,0 +1,17 @@
+.ft-cb { font-family: 'CBNUJIKJI'; }
+.ft-g9 { font-family: 'Galmuri9'; }
+
+.d-flex { display: flex; }
+.d-block { display: block; }
+
+.fill.width { width: 100%; }
+.fill.height { height: 100%; }
+
+.dir-column { flex-direction: column; }
+
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+
+.flex-1 { flex: 1; }
+.ai-center { align-items: center; }
+.jc-center { justify-content: center; }
