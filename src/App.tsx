@@ -24,6 +24,7 @@ const App: React.FC<IProps> = (props) => {
   const [code, setCode] = useState<string>(`허어 나는 = 라디유 글자!\n\n킹짱룡 소개 \<아이큐\>\n\t야옹 나는\n\t야옹 "아이큐는?"\n\t야옹 아이큐 + 50\n\t야옹 "입니다!"\n\<\<\<\n\n웡! 소개 \<50 숫자!\>`)
   const [compileCode, setCompileCode] = useState<string>('')
   const [output, setOutput] = useState<string[]>([])
+  const [script, setScript] = useState<any>(null)
 
   const onTextChange = (event: React.ChangeEvent) => {
     // @ts-ignore
@@ -60,21 +61,27 @@ const App: React.FC<IProps> = (props) => {
     }
   }, [])
   useEffect(() => {
+    // @ts-ignore
+    const dom = document
+    const prevScript = dom.querySelector('#prev-script')
+
+    if (prevScript) {
+      dom.body.removeChild(prevScript)
+    }
+
     if (compileCode) {
       setOutput([])
 
-      // @ts-ignore
-      const dom = document
+      const newScript = dom.createElement('script')
 
-      const script = dom.createElement('script')
+      newScript.id = 'prev-script'
+      newScript.innerHTML = compileCode
+      newScript.async = true
 
-      script.innerHTML = compileCode
-      script.async = true
-
-      dom.body.appendChild(script)
+      dom.body.appendChild(newScript)
 
       return () => {
-        dom.body.removeChild(script)
+        dom.body.removeChild(newScript)
       }
     }
   }, [compileCode])
