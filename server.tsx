@@ -17,7 +17,7 @@ import { App } from './src/App.tsx'
 import { 가자 } from './index.ts'
 
 const app = opine()
-const PORT = parseInt(Deno.env.get('PORT') ?? '3000')
+const PORT = parseInt(Deno.env.get('PORT') ?? '216')
 const __dirname = dirname(import.meta.url)
 
 const { files } = await Deno.emit(
