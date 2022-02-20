@@ -7,7 +7,19 @@ import {
   버근가,
   정규식_모음,
   이스터에그,
+  콘솔디유,
 } from './lib.ts'
+
+const 전처리 = `
+  window.console = {
+    ...window.console,
+    du: (...arg) => {
+      console.log(...arg)
+      
+      return arg
+    }
+  }
+`.trim()
 
 const 코드변환 = (
   비교문: IterableIterator<RegExpMatchArray>[],
@@ -45,15 +57,15 @@ const 코드파싱 = async (코드: string) => {
             },
             ([내용]) => {
               if (내용 !== 이스터에그(내용))
-                return `console.log("${이스터에그(내용)}")`
+                return 콘솔디유("${이스터에그(내용)}")
               if (정규식_모음.사칙연산.test(내용)) {
                 const 출력할_수_있는_내용_배열 = ['"알게모에요"', '"뭐엉?"', '"허어?"', '"라디유!"', 내용]
                 const 인덱스 = Math.floor(Math.random() * 출력할_수_있는_내용_배열.length)
 
-                return `console.log(${출력할_수_있는_내용_배열[인덱스]})`
+                return 콘솔디유(출력할_수_있는_내용_배열[인덱스])
               }
 
-              return `console.log(${내용})`
+              return 콘솔디유(내용)
             },
             ([이름, 매개변수들]) => {
               const 매개변수 = 매개변수들
@@ -84,13 +96,21 @@ const 코드파싱 = async (코드: string) => {
         )
     )
     .join('\n')
+    .trim()
 
   try {
-    (new Function(`${변환된_코드}`))()
+    (new Function(`
+      ${전처리}
+      ${변환된_코드}
+    `))()
 
     return 변환된_코드
   } catch (error) {
     console.log(`${error.message} 이거 못써요!`)
+
+    return Promise.reject(`
+      뭔가가 뭔가해서, 그 뭔가가 무엇이냐면, 
+    `)
   }
 }
 export const 가자 = async (코드: string) => {
@@ -101,11 +121,16 @@ export const 가자 = async (코드: string) => {
       코드.replace(정규식_모음.코드_정규식, '$1')
     )
   } catch (error) {
-    throw new Error(error)
+    return Promise.reject(error)
   }
 }
 
-if (Deno.args[0])
-  await 가자(
-    await 파일_유효성_검사(Deno.args[0])
-  )
+if (Deno.args[0]) {
+  try {
+    await 가자(
+      await 파일_유효성_검사(Deno.args[0])
+    )
+  } catch (error) {
+    throw new Error(error)
+  }
+}
