@@ -46,3 +46,7 @@ export const 이스터에그 = (값: string) => {
       return 값
   }
 }
+
+export const 콘솔디유 = (내용: string | number | boolean) => `
+  console.du(${내용})
+`.trim()
