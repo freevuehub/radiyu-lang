@@ -27,7 +27,7 @@
 
 <h3>실행</h3>
 
-`deno run -A https://deno.land/x/radiyu/mode.ts <파일 경로>`
+`deno run -A https://deno.land/x/radiyu/mod.ts <파일 경로>`
 
 <h3>문법</h3>
 
