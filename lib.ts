@@ -38,6 +38,14 @@ export const 버근가 = async (조건: boolean, 내용: string | number) => {
 
 export const 이스터에그 = (값: string) => {
   switch (값) {
+    case '!나이':
+      return '"물어보지마!"'
+    case '!라디유':
+      return '"Radio for YOU!"'
+    case '!남친':
+      return '"없어..없다구.."'
+    case '!능지':
+      return '"앗 여기 떨어졌어요!"'
     case '라디유!':
       return '"머찐 라디유!"'
     case '랜도프!':
