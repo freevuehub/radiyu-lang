@@ -5,6 +5,7 @@ export const 형식_모음 = {
 export const 타입_모음 = {
   '글자!': (값: string) => `'${값}'`,
   '숫자!': (값: string) => Number(값),
+  '됐다!': (값: '됐어!' | 'ㅈ됐어!') => 값 === '됐어!'
 }
 
 export const 정규식_모음 = {
